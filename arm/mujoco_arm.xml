@@ -1,0 +1,192 @@
+<!--
+
+MODEL: Univewrsal Robots UR5 + Robotiq S Model 3 Finger Gripper
+AUTHOR: Andrea Franceschetti @IASLAB Research Group
+UNIVERSITY: University of Padua
+DEPARTMENT: Departement of Information Engineering DEI
+Control Engineering / Automation Engineering
+
+-->
+
+
+<!--Link  MuJoCo modeling: http://www.mujoco.org/book/modeling.html-->
+
+<mujoco model="ur5gripper">
+    <compiler angle="degree"
+              inertiafromgeom="true"
+              texturedir="textures/"
+              meshdir="mesh/visual/"/>
+    <option timestep="2e-3"
+            iterations="10"
+            tolerance="1e-10"
+            impratio="20"/>
+    <size njmax="600" nconmax="100" nstack="300000"/>
+
+    <default>
+        <site rgba="0.8 0.6 0.7 0.3" type="ellipsoid" group="3"/>
+        <geom contype='1' conaffinity='1' condim='4'  margin="1e-3" solref=".01 1" solimp=".99 .99 .01" />
+        <joint armature="0.01" damping=".5" limited="true"/>
+        <default class="UR5">
+            <joint damping='5'/>
+        </default>
+        <default class="UR5e">
+            <joint damping='5'/>
+        </default>
+        <default class="GRIPPER">
+            <joint damping='5'/>
+        </default>
+    </default>
+
+    <visual>
+        <map fogstart="3" fogend="5" znear="0.05"/>
+        <quality shadowsize="2048"/>
+        <scale framelength="0.1"
+               framewidth="0.005"
+               contactwidth="0.1"
+               contactheight="0.005"
+               forcewidth="0.01"
+               />
+    </visual>
+
+    <!--Assets-->
+    <asset>
+        <!--Meshes-->
+        <mesh name="base"           file="base.stl"     />
+        <mesh name="shoulder"       file="shoulder.stl" />
+        <mesh name="upperarm"       file="upperarm.stl" />
+        <mesh name="forearm"        file="forearm.stl"  />
+        <mesh name="wrist1"         file="wrist1.stl"   />
+        <mesh name="wrist2"         file="wrist2.stl"   />
+        <mesh name="wrist3"         file="wrist3.stl"   />
+        <mesh name="link_0"         file="link_0.STL"   />
+        <mesh name="link_1"         file="link_1.STL"   />
+        <mesh name="link_2"         file="link_2.STL"   />
+        <mesh name="link_3"         file="link_3.STL"   />
+        <mesh name="bracket"        file="bracket.stl"  scale="0.0022 0.002 0.002"/>
+        <mesh name="bracket2"        file="bracket.stl"  scale="0.001 0.001 0.001"/>
+        <mesh name="servo"        file="MG996R_Servo_Model.stl"  scale="0.002 0.0025 0.002"/>
+        <mesh name="tomato_plant"   file="Tomato.stl"  scale="0.01 0.01 0.01" />
+        <!-- <mesh name="tomato_stem"   file="Tomato_stem_with_holes.stl"  scale="0.0001 0.0001 0.0001" /> -->
+
+        <!--Textures-->
+        <texture name="ur5_tex"     type="2d"       builtin="flat" height="32" width="32" rgb1="0.45 0.45 0.45" />
+        <texture name="gripper_tex" type="2d"       builtin="flat" height="32" width="32" rgb1="0.45 0.45 0.45" rgb2="0 0 0"/>
+        <texture name="bench_tex"   type="2d"       builtin="flat" height="32" width="32" rgb1="0.7 0.7 0.7" />
+        <texture name="sky_tex"     type="skybox"   builtin="gradient" width="100" height="100" rgb1="1 1 1" rgb2="0.3 0.3 0.8" />
+        <texture name="texgeom"     type="cube"     builtin="flat" mark="cross" width="127" height="1278" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" markrgb="1 1 1" random="0.01" />
+        <texture name="floor_tex"   type="2d"        builtin="checker" rgb1=".2 .3 .4" rgb2=".1 .2 .3" width="100" height="100" />
+        <texture name="wood"        type="cube"     file="wood2.png"/>
+        <texture name="metal"        type="cube"     file="metal2.png"/>
+        <!--Materials-->
+        <material name="ur5_mat"        texture="ur5_tex"   shininess="0.9" specular="0.75" reflectance="0.3"/>
+        <material name="gripper_mat"    texture="gripper_tex"   shininess="0.9" specular="0.75" reflectance="0.4"/>
+        <material name='floor_mat'      texture="floor_tex"  shininess="0.8" texrepeat="10 10" specular="0.7"  reflectance="0.5" />
+        <material name='geom'           texture="texgeom"   texuniform="true" />
+        <material name="bench_mat"      texture="metal"   shininess="0.1" specular="0.5" reflectance="0.2"/>
+        <material name="tablecube"      texture="wood" rgba=".8 .8 .8 1"/>
+    </asset>
+
+    <!--Contacts-->
+    
+
+    <!--MODEL DESCRIPTION-->
+    <worldbody>
+        <!--Lighting parameters-->
+        <light name="light3" mode="targetbody" target="box_link" directional="true" pos="1 1 3" />
+        <!--Floor Property-->
+        <geom name='floor' material="floor_mat" pos='0 0 0' size='2.5 2.5 0.1'  type='plane' />
+
+
+        <!--Robot UR5-->
+        <body name="box_link" pos="0 0 0">
+            <!--<geom size=".3 .2 .435" type="box" material="bench_mat"/>-->
+            <!-- <geom size="1.0 .19 .03" pos ="0 0 1.6" type="box" material="bench_mat"/> -->
+            <geom size="1.04 .38 .04" pos ="0 0 0.04" type="box" material="bench_mat"/>
+
+            <geom size="1 .04 .04" pos="0 0.4 1.55" type="box" material="bench_mat"/>
+            <geom size="1 .04 .04" pos="0 -0.4 1.55" type="box" material="bench_mat"/>
+            
+
+            <geom size=".04 .4 .04" pos="-1 0 1.55" type="box" material="bench_mat"/>
+            <geom size=".04 .4 .04" pos="1 0 1.55" type="box" material="bench_mat"/>
+            <geom size=".04 .04 .8" pos ="1 0.4 0.8" type="box" material="bench_mat"/>
+            <geom size=".04 .04 .8" pos ="-1 0.4 0.8" type="box" material="bench_mat"/>
+            <geom size=".04 .04 .8" pos ="1 -.4 0.8" type="box" material="bench_mat"/>
+            <geom size=".04 .04 .8" pos ="-1 -.4 0.8" type="box" material="bench_mat"/>
+            <geom name="ceil_rail" size="1 .02 .02" pos="0 0 1.55" type="box" material="bench_mat"/>
+            
+            
+            <body>
+                <geom name = "tomato" type="mesh" mesh="tomato_plant" pos="1 1 0" rgba="0.7 0 0 1" mass = "0.005" />
+                <joint name="tomatoslider" type="slide" pos="1 1 0" axis="1 0 0" range="-.8 .8"/>
+            </body>
+            
+            
+            <body>
+                <inertial mass="4"  pos="0 0 1.55"/>
+                <geom name="slider_servo" size="0.15 0.15 0.1" pos="0 0 1.55" type="box" material="tablecube" friction = "0.1 0.1 0.1"/>
+                <joint name="slider" type="slide" pos="-0.1 0 1.55" axis="1 0 0" range="-.8 .8"/>
+                <body>
+                    <geom name = "yservo"  type="mesh" mesh="servo" material="ur5_mat" pos="0 0 1.45" euler = " -90 0 0" mass = "0.5" friction = "0 0 5000"/>
+                    <body>
+                        <geom name = "xservo" type="mesh" mesh="servo" material="ur5_mat" pos="-0.025 0.035 1.303" euler = "90 180 90" mass = "0.5" friction = "0 0 5000" />
+                        <joint name="fullr" type="hinge" pos = "0.02 0.075 1.34" axis = " 0 0 1" range = "-360 360"/>
+
+                        <body>
+                            <geom type="mesh"  mesh="bracket" material="ur5_mat" pos = "-0.03 0.1355 1.228" euler = "90 0 0" mass = "0.01" friction = "0 0 5000" />
+                            <joint name="pr1" type="hinge" pos = "0.02 0.10911 1.3214" axis = " 1 0 0" range = "-135 135"/>
+                            <body>
+                                <geom type="mesh"  mesh="bracket" material="ur5_mat" pos = "-0.03 0.0818 1.231" euler = "-90 0 0"/>
+
+                                <body>
+                                    <geom name = "zservo" type="mesh" mesh="servo" material="ur5_mat" pos="-0.025 0.1275 1.064" euler = "180 180 90" mass = "0.5" friction = "0 0 5000"/>
+
+                                    <joint name="pr2" type="hinge" pos = "0.02 0.1085 1.138" axis = " 1 0 0" range = "-135 135"/>
+
+                                    <body>
+                                        <geom name = "extend" type = "cylinder" size = "0.01 0.07" pos = "0.02 0.115 1.011" material = "ur5_mat"/>
+
+                                        <body>
+                                            <geom type="mesh"  mesh="bracket2" material="ur5_mat" pos = "0.006 0.14 0.890" euler = "-90 90 -90"/>
+                                            <camera name = "endcam" pos = "0.006 0.13 0.899"/>
+                                            <!-- <body>
+                                                <geom type="box"  size = "0.05 0.05 0.05" pos = "0.006 0.13 0.899" rgba = "0.5 0.1 0.3 0.4"/>
+                                            </body> -->
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+
+            <inertial pos="0 0 0" mass="1000" diaginertia="0 0 0" />
+            
+        </body>
+    </worldbody>
+
+    <actuator>
+        <motor name="sliderTorque" ctrllimited = "true" ctrlrange = "-.5 .5" gear="50000000" joint="slider" />
+        <motor name="TomatosliderTorque" ctrllimited = "true" ctrlrange = "-.5 .5" gear="5000" joint="tomatoslider" />
+
+         <!-- <position name="slide" joint="slider" ctrllimited = "true" ctrlrange = "-.8 .8" kp = "10" /> -->
+        
+    </actuator>
+
+    <actuator>
+        <!-- <motor name="fullrTorque" ctrllimited = "true" ctrlrange = "-100 100"  gear="1" joint="fullr" />
+        <position name="fullrPosition" joint="fullr" kp = "100" />
+
+        <motor name="pr1Torque"  ctrllimited = "true" ctrlrange = "-45 45" gear="1" joint="pr1" />
+        <motor name="pr2Torque" ctrllimited = "true" ctrlrange = "-45 45"  gear="1" joint="pr2" /> -->
+
+        <position name="fullrPosition" joint="fullr" ctrllimited = "true" ctrlrange = "-45 45" kp = "10" />
+        <position name="pr1Torque" joint="pr1" ctrllimited = "true" ctrlrange = "-45 45" kp = ".5" />
+        <position name="pr2Torque" joint="pr2" ctrllimited = "true" ctrlrange = "-45 45" kp = ".5" />
+
+        
+    </actuator>
+
+    
+</mujoco>
